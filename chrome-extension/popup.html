@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="logo">short.link</span>
+            <button id="settingsBtn" class="settings-btn">⚙️</button>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab active" data-tab="create">Create</button>
+            <button class="tab" data-tab="analytics">Analytics</button>
+            <button class="tab" data-tab="settings">Settings</button>
+        </div>
+
+        <!-- Create Tab -->
+        <div id="create" class="section active">
+            <div class="input-group">
+                <label>Current Page URL</label>
+                <input type="text" id="currentUrl" readonly>
+            </div>
+
+            <div class="input-group">
+                <label>Short Code (Optional)</label>
+                <input type="text" id="customCode" placeholder="my-campaign">
+            </div>
+
+            <div class="input-group">
+                <label>Tags (Optional)</label>
+                <input type="text" id="tags" placeholder="Campaign, Email">
+            </div>
+
+            <div class="input-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="generateQr"> Generate QR Code
+                </label>
+            </div>
+
+            <button id="shortenBtn" class="primary-btn">Shorten Link</button>
+
+            <div id="result" class="result">
+                <div class="result-url" id="resultUrl"></div>
+                <button class="copy-btn" id="copyBtn">Copy to Clipboard</button>
+                <button class="copy-btn" id="qrBtn" style="display: none;">Download QR</button>
+            </div>
+
+            <div id="loading" class="loading">Loading...</div>
+            <div id="error" class="error"></div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="section">
+            <div class="analytics-item">
+                <div class="analytics-label">Clicks (This Link)</div>
+                <div class="analytics-value" id="linkClicks">42</div>
+            </div>
+
+            <div class="analytics-item">
+                <div class="analytics-label">Unique Visitors</div>
+                <div class="analytics-value" id="uniqueVisitors">32</div>
+            </div>
+
+            <div class="analytics-item">
+                <div class="analytics-label">Top Country</div>
+                <div class="analytics-value" id="topCountry">United States</div>
+            </div>
+
+            <div class="analytics-item">
+                <div class="analytics-label">Top Device</div>
+                <div class="analytics-value" id="topDevice">Mobile</div>
+            </div>
+
+            <button class="primary-btn" id="openDashboard">View Full Dashboard →</button>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="section">
+            <div class="input-group">
+                <label>API Token</label>
+                <input type="password" id="apiToken" placeholder="Enter your API token">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="autoShorten" checked>
+                <label for="autoShorten">Auto-shorten on copy</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="showQrDefault" checked>
+                <label for="showQrDefault">Generate QR by default</label>
+            </div>
+
+            <button class="primary-btn" id="saveSettings">Save Settings</button>
+            <button class="secondary-btn" id="logoutBtn">Logout</button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
+
