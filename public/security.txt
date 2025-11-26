@@ -1,0 +1,109 @@
+# Security Policy and Vulnerability Reporting
+
+Contact: security@short.link
+Contact: https://short.link/security
+Expires: 2026-12-31T23:59:59.000Z
+Encryption: https://short.link/.well-known/pgp-key.txt
+Preferred-Languages: en
+Canonical: https://short.link/.well-known/security.txt
+Policy: https://short.link/security
+Acknowledgments: https://short.link/security/acknowledgments
+
+# Security Vulnerability Reporting
+
+We take the security of short.link seriously. If you discover a security vulnerability, please report it to us as described below.
+
+## How to Report
+
+Please email security vulnerabilities to: security@short.link
+
+Include as much of the following information as possible:
+- Type of issue (e.g., XSS, SQL injection, authentication bypass)
+- Full paths of source file(s) related to the manifestation of the issue
+- The location of the affected source code (tag/branch/commit or direct URL)
+- Step-by-step instructions to reproduce the issue
+- Proof-of-concept or exploit code (if possible)
+- Impact of the issue, including how an attacker might exploit the issue
+
+## What to Expect
+
+- We will acknowledge receipt of your report within 48 hours
+- We will provide an initial assessment within 7 business days
+- We will keep you informed of our progress
+- We will notify you when the vulnerability has been fixed
+- We will credit you in our security acknowledgments (unless you prefer otherwise)
+
+## Scope
+
+### In Scope
+- short.link web application (https://short.link)
+- API endpoints (https://api.short.link)
+- Chrome extension
+- Authentication and authorization flaws
+- Data exposure vulnerabilities
+- Injection vulnerabilities
+- Cross-site scripting (XSS)
+- Cross-site request forgery (CSRF)
+- Server-side request forgery (SSRF)
+- Remote code execution
+- Privilege escalation
+
+### Out of Scope
+- Denial of service (DoS) attacks
+- Physical attacks
+- Social engineering
+- Issues requiring physical access to a user's device
+- Issues in third-party applications or services
+- Issues that don't affect the latest version
+- Issues requiring MITM or physical access to victim's device
+- Spam or social engineering attacks
+- Issues related to email security (SPF, DKIM, DMARC)
+
+## Safe Harbor
+
+We consider security research and vulnerability disclosure activities conducted consistent with this policy to be:
+- Authorized in view of any applicable anti-hacking laws
+- Exempt from restrictions in our Terms of Service
+- Lawful, helpful to the overall security of the Internet, and conducted in good faith
+
+You are expected to comply with all applicable laws. We will not pursue legal action against researchers who:
+- Act in good faith
+- Do not access or modify data that does not belong to them
+- Do not violate any laws
+- Do not cause harm to our users, employees, or infrastructure
+- Do not disclose vulnerabilities publicly before we have had a reasonable time to address them
+
+## Rewards
+
+We do not currently offer monetary rewards for security vulnerabilities. However, we will:
+- Publicly acknowledge your responsible disclosure (with your permission)
+- Add you to our Security Hall of Fame
+- Provide early access to security patches
+
+## Disclosure Policy
+
+- Please do not publicly disclose vulnerabilities until we have had a chance to address them
+- We ask for at least 90 days of coordinated disclosure before public disclosure
+- We will work with you to coordinate a disclosure timeline
+
+## Encryption
+
+For sensitive reports, you may encrypt your message using our PGP key:
+- Key: https://short.link/.well-known/pgp-key.txt
+- Key ID: [To be added when PGP key is generated]
+- Fingerprint: [To be added when PGP key is generated]
+
+## Additional Resources
+
+- Security Policy: https://short.link/security
+- Privacy Policy: https://short.link/privacy
+- Terms of Service: https://short.link/terms
+
+## Contact
+
+For general security questions or concerns:
+- Email: security@short.link
+- Security Page: https://short.link/security
+
+Thank you for helping keep short.link and our users safe!
+
