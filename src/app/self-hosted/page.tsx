@@ -24,7 +24,7 @@ export default function SelfHostedPage() {
           <ul className="list-disc pl-6 text-gray-600 mb-6">
             <li>Docker and Docker Compose</li>
             <li>Domain name with DNS access</li>
-            <li>SSL certificate (Let's Encrypt recommended)</li>
+            <li>SSL certificate (Let&apos;s Encrypt recommended)</li>
           </ul>
           <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Installation</h2>
           <div className="bg-gray-50 p-6 rounded-lg border-2 border-gray-200 mb-6">

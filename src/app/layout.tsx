@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import '@/styles/globals.css';
 
@@ -24,34 +25,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'SoftwareApplication',
-              name: 'short.link',
-              description: 'Privacy-first URL shortener with 50+ features',
-              url: 'https://short.link',
-              offers: {
-                '@type': 'Offer',
-                price: '9',
-                priceCurrency: 'USD',
-              },
-              applicationCategory: 'UtilityApplication',
-              aggregateRating: {
-                '@type': 'AggregateRating',
-                ratingValue: '4.8',
-                ratingCount: '1200',
-              },
-            }),
-          }}
-        />
-      </head>
-      <body>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'SoftwareApplication',
+                name: 'short.link',
+                description: 'Privacy-first URL shortener with 50+ features',
+                url: 'https://short.link',
+                offers: {
+                  '@type': 'Offer',
+                  price: '9',
+                  priceCurrency: 'USD',
+                },
+                applicationCategory: 'UtilityApplication',
+                aggregateRating: {
+                  '@type': 'AggregateRating',
+                  ratingValue: '4.8',
+                  ratingCount: '1200',
+                },
+              }),
+            }}
+          />
+        </head>
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }
 

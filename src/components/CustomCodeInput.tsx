@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface CustomCodeInputProps {
   onCodeChange?: (code: string, available: boolean) => void;
@@ -13,20 +13,7 @@ export function CustomCodeInput({ onCodeChange, initialCode = '' }: CustomCodeIn
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (customCode) {
-        checkAvailability(customCode);
-      } else {
-        setAvailable(null);
-        setError('');
-      }
-    }, 500); // Debounce 500ms
-
-    return () => clearTimeout(timeoutId);
-  }, [customCode]);
-
-  const checkAvailability = async (code: string) => {
+  const checkAvailability = useCallback(async (code: string) => {
     // Validation
     if (code.length < 3) {
       setError('Code must be at least 3 characters');
@@ -66,7 +53,20 @@ export function CustomCodeInput({ onCodeChange, initialCode = '' }: CustomCodeIn
     } finally {
       setChecking(false);
     }
-  };
+  }, [onCodeChange]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (customCode) {
+        checkAvailability(customCode);
+      } else {
+        setAvailable(null);
+        setError('');
+      }
+    }, 500); // Debounce 500ms
+
+    return () => clearTimeout(timeoutId);
+  }, [customCode, checkAvailability]);
 
   return (
     <div className="p-6 bg-gray-50 rounded-lg border-2 border-gray-200">

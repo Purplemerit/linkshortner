@@ -1,6 +1,8 @@
 'use client';
 
 import { LinkShortener } from '@/components/LinkShortener';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import Link from 'next/link';
 
 export default function Home() {
   const features = [
@@ -50,21 +52,29 @@ export default function Home() {
             <span className="text-2xl font-bold text-purple-600">short.link</span>
             <span className="text-sm text-gray-600 hidden md:inline">Privacy-first URL shortener</span>
           </div>
-          
+
           <div className="hidden md:flex gap-8">
             <a href="#features" className="text-gray-600 hover:text-purple-600 font-semibold">Features</a>
             <a href="#pricing" className="text-gray-600 hover:text-purple-600 font-semibold">Pricing</a>
             <a href="/docs" className="text-gray-600 hover:text-purple-600 font-semibold">Docs</a>
             <a href="/blog" className="text-gray-600 hover:text-purple-600 font-semibold">Blog</a>
           </div>
-          
-          <div className="flex gap-4">
-            <button className="px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg font-semibold">
-              Sign In
-            </button>
-            <button className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">
-              Get Started Free
-            </button>
+
+          <div className="flex gap-4 items-center">
+            <SignedOut>
+              <Link href="/sign-in" className="px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg font-semibold">
+                Sign In
+              </Link>
+              <Link href="/sign-up" className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">
+                Get Started Free
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link href="/dashboard" className="px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg font-semibold">
+                Dashboard
+              </Link>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
           </div>
         </div>
       </nav>
@@ -75,12 +85,12 @@ export default function Home() {
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">
             The Privacy-First URL Shortener
           </h1>
-          
+
           <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
             50+ features. Real-time analytics. Zero cookies. Starting at just{' '}
             <span className="text-purple-600 font-bold">$12/month</span>
           </p>
-          
+
           {/* Social Proof */}
           <div className="flex justify-center gap-8 mb-12 flex-wrap">
             <div className="text-center">
@@ -96,7 +106,7 @@ export default function Home() {
               <div className="text-sm text-gray-600">User Rating</div>
             </div>
           </div>
-          
+
           {/* CTA Buttons */}
           <div className="flex gap-4 justify-center mb-12 flex-wrap">
             <button className="px-8 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold text-lg">
@@ -106,7 +116,7 @@ export default function Home() {
               Watch Demo
             </button>
           </div>
-          
+
           {/* Link Shortener Component */}
           <LinkShortener />
         </div>
@@ -121,7 +131,7 @@ export default function Home() {
           <p className="text-center text-gray-600 mb-12 text-lg">
             All 50 features included in every paid plan. No hidden limits.
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {features.map((feature, idx) => (
               <div
@@ -137,7 +147,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-          
+
           <div className="text-center">
             <a
               href="/features"
@@ -158,7 +168,7 @@ export default function Home() {
           <p className="text-center text-gray-600 mb-12 text-lg">
             No hidden fees. Cancel anytime. 30-day money-back guarantee.
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Free Tier */}
             <div className="bg-white border-2 border-gray-200 rounded-lg p-8">
@@ -179,7 +189,7 @@ export default function Home() {
                 Get Started
               </button>
             </div>
-            
+
             {/* Starter Tier */}
             <div className="bg-white border-2 border-purple-600 rounded-lg p-8 relative md:transform md:scale-105">
               <div className="absolute top-4 right-4 bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
@@ -202,7 +212,7 @@ export default function Home() {
                 Start Free Trial
               </button>
             </div>
-            
+
             {/* Pro Tier */}
             <div className="bg-white border-2 border-gray-200 rounded-lg p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Professional</h3>
@@ -223,7 +233,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-          
+
           <div className="text-center mt-12">
             <a href="/pricing" className="text-purple-600 hover:text-purple-700 font-semibold">
               See complete pricing →
@@ -238,7 +248,7 @@ export default function Home() {
           <h2 className="text-4xl font-bold text-gray-900 mb-4 text-center">
             Why short.link Wins
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div className="bg-white p-8 rounded-lg">
               <h3 className="text-xl font-bold text-purple-600 mb-3">🔒 Privacy-First</h3>
@@ -251,7 +261,7 @@ export default function Home() {
                 <li>✓ GDPR compliant</li>
               </ul>
             </div>
-            
+
             <div className="bg-white p-8 rounded-lg">
               <h3 className="text-xl font-bold text-purple-600 mb-3">💰 Lowest Price</h3>
               <p className="text-gray-600 mb-4">
@@ -263,7 +273,7 @@ export default function Home() {
                 <li>✓ No overage charges</li>
               </ul>
             </div>
-            
+
             <div className="bg-white p-8 rounded-lg">
               <h3 className="text-xl font-bold text-purple-600 mb-3">🔍 Link Health Monitoring</h3>
               <p className="text-gray-600 mb-4">
@@ -276,7 +286,7 @@ export default function Home() {
               </ul>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden mb-8">
             <table className="w-full">
               <thead className="bg-purple-600 text-white">
@@ -309,7 +319,7 @@ export default function Home() {
               </tbody>
             </table>
           </div>
-          
+
           <div className="text-center">
             <a
               href="/comparison"
@@ -327,34 +337,34 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Trusted by Teams Worldwide
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div className="bg-gray-50 p-8 rounded-lg">
               <div className="flex gap-1 mb-3">★★★★★</div>
               <p className="text-gray-600 mb-4">
-                "We switched from Bitly and saved 60% on subscription costs. The privacy-first approach is exactly what we needed for GDPR compliance."
+                &quot;We switched from Bitly and saved 60% on subscription costs. The privacy-first approach is exactly what we needed for GDPR compliance.&quot;
               </p>
               <div>
                 <div className="font-semibold text-gray-900">Sarah Chen</div>
                 <div className="text-sm text-gray-600">Marketing Director, TechCorp</div>
               </div>
             </div>
-            
+
             <div className="bg-gray-50 p-8 rounded-lg">
               <div className="flex gap-1 mb-3">★★★★★</div>
               <p className="text-gray-600 mb-4">
-                "The analytics are incredibly detailed and the custom domain setup was seamless. Best URL shortener we've used."
+                &quot;The analytics are incredibly detailed and the custom domain setup was seamless. Best URL shortener we&apos;ve used.&quot;
               </p>
               <div>
                 <div className="font-semibold text-gray-900">Michael Rodriguez</div>
                 <div className="text-sm text-gray-600">CTO, StartupXYZ</div>
               </div>
             </div>
-            
+
             <div className="bg-gray-50 p-8 rounded-lg">
               <div className="flex gap-1 mb-3">★★★★★</div>
               <p className="text-gray-600 mb-4">
-                "Love the QR code customization features. We use it for all our marketing campaigns. Highly recommend!"
+                &quot;Love the QR code customization features. We use it for all our marketing campaigns. Highly recommend!&quot;
               </p>
               <div>
                 <div className="font-semibold text-gray-900">Emily Johnson</div>
@@ -362,7 +372,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
+
           <div>
             <p className="text-center text-gray-600 mb-8 font-semibold">Used by:</p>
             <div className="flex justify-center items-center gap-12 flex-wrap">
@@ -381,7 +391,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
             Common Questions
           </h2>
-          
+
           <div className="space-y-4">
             {faqs.map((faq, idx) => (
               <details key={idx} className="bg-white p-6 rounded-lg border border-gray-200">
@@ -402,7 +412,7 @@ export default function Home() {
           <p className="text-xl text-purple-100 mb-12">
             100 free short links per month. No credit card required.
           </p>
-          
+
           <div className="flex gap-4 justify-center flex-wrap">
             <button className="px-8 py-4 bg-white text-purple-600 rounded-lg hover:bg-gray-100 font-bold text-lg">
               Start Free
@@ -423,7 +433,7 @@ export default function Home() {
               Privacy-first URL shortener with 50+ features. No cookies. No tracking.
             </p>
           </div>
-          
+
           <div>
             <h4 className="font-bold mb-4">Product</h4>
             <ul className="space-y-2 text-sm text-gray-400">
@@ -433,7 +443,7 @@ export default function Home() {
               <li><a href="/blog" className="hover:text-white">Blog</a></li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-bold mb-4">Company</h4>
             <ul className="space-y-2 text-sm text-gray-400">
@@ -443,7 +453,7 @@ export default function Home() {
               <li><a href="/security" className="hover:text-white">Security</a></li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-bold mb-4">Connect</h4>
             <ul className="space-y-2 text-sm text-gray-400">
@@ -454,7 +464,7 @@ export default function Home() {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-400 text-sm">© 2025 short.link. All rights reserved.</p>
           <div className="flex gap-4">
@@ -467,4 +477,3 @@ export default function Home() {
     </div>
   );
 }
-

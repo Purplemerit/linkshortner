@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib/api';
 import { AnalyticsData } from '@/lib/dummy-data';
 
@@ -7,7 +7,7 @@ export function useAnalytics(linkId: string, range: string = '7d') {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     if (!linkId) return;
     setLoading(true);
     setError(null);
@@ -18,14 +18,14 @@ export function useAnalytics(linkId: string, range: string = '7d') {
       setData(response.data as AnalyticsData);
     }
     setLoading(false);
-  };
+  }, [linkId, range]);
 
   useEffect(() => {
     fetchAnalytics();
     // Poll every 5 seconds for real-time updates
     const interval = setInterval(fetchAnalytics, 5000);
     return () => clearInterval(interval);
-  }, [linkId, range]);
+  }, [fetchAnalytics]);
 
   return {
     data,

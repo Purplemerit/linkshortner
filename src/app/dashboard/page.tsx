@@ -3,6 +3,7 @@
 import { LinksDashboard } from '@/components/LinksDashboard';
 import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
 import { ClickTrendsChart } from '@/components/ClickTrendsChart';
+import { UserButton } from '@clerk/nextjs';
 
 export default function DashboardPage() {
   return (
@@ -14,13 +15,14 @@ export default function DashboardPage() {
             <span className="text-2xl font-bold text-purple-600">short.link</span>
             <span className="text-sm text-gray-600 hidden md:inline">Dashboard</span>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <a href="/" className="px-4 py-2 text-gray-600 hover:text-purple-600 font-semibold">
               Home
             </a>
             <button className="px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg font-semibold">
               Settings
             </button>
+            <UserButton afterSignOutUrl="/" />
           </div>
         </div>
       </nav>
