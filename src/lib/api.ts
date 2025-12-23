@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export interface ApiResponse<T> {
   data?: T;
@@ -10,7 +10,19 @@ export async function apiRequest<T>(
   options?: RequestInit
 ): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    // Build request URL dynamically so the app works across different base URLs/origins.
+    let url: string;
+    if (API_BASE_URL) {
+      url = `${API_BASE_URL.replace(/\/$/, '')}${endpoint}`;
+    } else if (typeof window !== 'undefined') {
+      // In the browser, use the current origin so requests target the same host.
+      url = `${window.location.origin}/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+    } else {
+      // Fallback for environments without window (SSR). Use environment override if provided.
+      url = `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+    }
+
+    const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
         ...options?.headers,

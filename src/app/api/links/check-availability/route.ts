@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dummyLinks, reservedCodes } from '@/lib/dummy-data';
 
+function getRequestOrigin(request: NextRequest) {
+  const forwardedProto = request.headers.get('x-forwarded-proto');
+  const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host');
+  if (forwardedHost) {
+    const proto = forwardedProto || (request.nextUrl?.protocol ? request.nextUrl.protocol.replace(':', '') : 'https');
+    return `${proto}://${forwardedHost.replace(/\/$/, '')}`;
+  }
+  return request.nextUrl?.origin || '';
+}
+
 // In-memory store
 let linksStore = [...dummyLinks];
 
@@ -21,7 +31,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         code,
         available: false,
-        suggestion: `${code}-2024`,
+        suggestion: `${code}-${new Date().getFullYear()}`,
       });
     }
 
@@ -38,10 +48,11 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    const origin = getRequestOrigin(request);
     return NextResponse.json({
       code,
       available: true,
-      shortUrl: `https://short.link/${code}`,
+      shortUrl: `${origin}/${code}`,
     });
   } catch (error) {
     return NextResponse.json(
