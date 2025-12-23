@@ -154,6 +154,16 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error creating link:', error);
+    const msg = error && (error as any).message ? (error as any).message : String(error);
+    if (msg.includes("Can't reach database server") || msg.includes('PrismaClientInitializationError')) {
+      try {
+        const logPath = path.join(process.cwd(), 'server-error.log');
+        fs.appendFileSync(logPath, `${new Date().toISOString()} - DATABASE_UNAVAILABLE\n`);
+      } catch (logError) {
+        console.error('Failed to write DB unavailable log:', logError);
+      }
+      return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
+    }
     try {
       const logPath = path.join(process.cwd(), 'server-error.log');
       const errorMessage = error instanceof Error ? error.stack : String(error);
