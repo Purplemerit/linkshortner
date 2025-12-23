@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
-import fs from 'fs';
-import path from 'path';
 import { dummyLinks } from '@/lib/dummy-data';
 
 // Reserved codes that cannot be used
@@ -179,20 +177,10 @@ export async function POST(request: NextRequest) {
     console.error('Error creating link:', error);
     const msg = error && (error as any).message ? (error as any).message : String(error);
     if (msg.includes("Can't reach database server") || msg.includes('PrismaClientInitializationError')) {
-      try {
-        const logPath = path.join(process.cwd(), 'server-error.log');
-        fs.appendFileSync(logPath, `${new Date().toISOString()} - DATABASE_UNAVAILABLE\n`);
-      } catch (logError) {
-        console.error('Failed to write DB unavailable log:', logError);
-      }
-      return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
-    }
-    try {
-      const logPath = path.join(process.cwd(), 'server-error.log');
-      const errorMessage = error instanceof Error ? error.stack : String(error);
-      fs.appendFileSync(logPath, `${new Date().toISOString()} - ${errorMessage}\n`);
-    } catch (logError) {
-      console.error('Failed to write to log file:', logError);
+      console.error('DATABASE UNAVAILABLE - Check connection pooling configuration');
+      return NextResponse.json({
+        error: 'Database unavailable - please check Supabase connection pooler settings'
+      }, { status: 503 });
     }
     return NextResponse.json(
       { error: 'Failed to create link' },
