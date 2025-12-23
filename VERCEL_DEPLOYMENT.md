@@ -1,164 +1,102 @@
 # Vercel Deployment Guide
 
-## Fixed Issues
+## Issue: Database Unavailable in Production
 
-The build error `Failed to collect page data for /[code]` has been resolved with the following fixes:
+Your app is returning 503 errors because the `DATABASE_URL` environment variable is not properly configured in Vercel.
 
-### 1. Dynamic Route Configuration
-Added proper exports to `src/app/[code]/route.ts`:
+## Solution: Configure Environment Variables in Vercel
+
+### Step 1: Go to Vercel Dashboard
+
+1. Open https://vercel.com/dashboard
+2. Select your project: `linkshortner-wgia`
+3. Click on **Settings** tab
+4. Click on **Environment Variables** in the left sidebar
+
+### Step 2: Add Environment Variables
+
+Add the following environment variables:
+
+#### 1. DATABASE_URL
+- **Key**: `DATABASE_URL`
+- **Value**: `postgresql://postgres:Ha%401009200@db.zbttccpsaxphhrftzada.supabase.co:5432/postgres?sslmode=require`
+- **Environment**: Select all (Production, Preview, Development)
+
+#### 2. NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+- **Key**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- **Value**: `pk_test_YW1hemluZy1mb3hob3VuZC01Ni5jbGVyay5hY2NvdW50cy5kZXYk`
+- **Environment**: Select all (Production, Preview, Development)
+
+#### 3. CLERK_SECRET_KEY
+- **Key**: `CLERK_SECRET_KEY`
+- **Value**: `sk_test_R3GFSlhUgE3DogLzcsnnf4NdPuFwr7qGowrqUi89Z6`
+- **Environment**: Select all (Production, Preview, Development)
+
+### Step 3: Redeploy
+
+After adding the environment variables:
+
+1. Go to **Deployments** tab
+2. Click on the latest deployment
+3. Click the **...** (three dots) menu
+4. Click **Redeploy**
+
+OR simply push a new commit to trigger automatic redeployment.
+
+### Step 4: Verify
+
+After redeployment:
+1. Visit your site: https://linkshortner-wgia.vercel.app
+2. Check the browser console for errors
+3. Try creating a short link
+
+## How the Dynamic Base URL Works
+
+The app already handles dynamic base URLs correctly using the `getRequestOrigin()` function in [src/app/api/links/route.ts](src/app/api/links/route.ts:11-19):
+
 ```typescript
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+function getRequestOrigin(request: NextRequest) {
+  const forwardedProto = request.headers.get('x-forwarded-proto');
+  const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host');
+  if (forwardedHost) {
+    const proto = forwardedProto || (request.nextUrl?.protocol ? request.nextUrl.protocol.replace(':', '') : 'https');
+    return `${proto}://${forwardedHost.replace(/\/$/, '')}`;
+  }
+  return request.nextUrl?.origin || '';
+}
 ```
 
-### 2. Middleware Update
-Updated `src/middleware.ts` to allow the `[code]` route as a public route:
-```typescript
-'/:code' // Allow short link redirects without auth
-```
+This function automatically:
+- Detects if running on Vercel (uses forwarded headers)
+- Constructs the correct base URL based on the current domain
+- Works in both local development and production
 
-### 3. Params Type Fix
-Updated params type to match Next.js 14+ async params pattern:
-```typescript
-{ params }: { params: Promise<{ code: string }> }
-```
+## Common Issues
 
-### 4. Prisma Configuration
-Added `postinstall` script to ensure Prisma client is generated during deployment:
-```json
-"postinstall": "prisma generate"
-```
+### Issue: Still getting 503 errors after adding environment variables
+**Solution**: Make sure you redeployed after adding the variables. Environment variables only take effect after a new deployment.
 
-## Vercel Environment Variables
+### Issue: DATABASE_URL contains special characters
+**Solution**: URL encode special characters in the password. For example:
+- `@` becomes `%40`
+- `!` becomes `%21`
+- Your password `Ha@1009200` is correctly encoded as `Ha%401009200`
 
-You need to set the following environment variables in your Vercel project settings:
+### Issue: Database connection timeout
+**Solution**:
+1. Check if your Supabase database allows connections from Vercel IPs
+2. Verify the `sslmode=require` parameter is included
+3. Test the connection string locally first
 
-### Required Variables
+## Checking Logs
 
-1. **DATABASE_URL**
-   - Your PostgreSQL database connection string
-   - Format: `postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public`
-   - For Vercel, use a service like:
-     - Vercel Postgres
-     - Neon
-     - Supabase
-     - Railway
-     - PlanetScale (with MySQL adapter)
+To see detailed error logs in Vercel:
+1. Go to your project dashboard
+2. Click **Deployments**
+3. Click on a deployment
+4. Click **Functions** tab to see serverless function logs
+5. Look for Prisma or database connection errors
 
-2. **NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY**
-   - Your Clerk publishable key
-   - Get from: https://dashboard.clerk.com
+## Local Development
 
-3. **CLERK_SECRET_KEY**
-   - Your Clerk secret key
-   - Get from: https://dashboard.clerk.com
-
-### Setting Environment Variables
-
-1. Go to your Vercel project dashboard
-2. Click on "Settings" → "Environment Variables"
-3. Add each variable:
-   - **Variable Name**: (e.g., `DATABASE_URL`)
-   - **Value**: (your actual value)
-   - **Environment**: Select all (Production, Preview, Development)
-4. Click "Save"
-
-## Database Setup for Vercel
-
-### Option 1: Vercel Postgres (Recommended)
-```bash
-# Install Vercel Postgres
-vercel postgres create
-
-# This will automatically set DATABASE_URL in your environment
-```
-
-### Option 2: External Database (Neon, Supabase, etc.)
-
-1. Create a PostgreSQL database on your preferred provider
-2. Get the connection string
-3. Add it to Vercel environment variables as `DATABASE_URL`
-4. Make sure the database allows connections from Vercel's IP ranges
-
-## Deployment Steps
-
-1. **Push your code to GitHub**
-   ```bash
-   git add .
-   git commit -m "Fix Vercel build issues"
-   git push origin main
-   ```
-
-2. **Connect to Vercel**
-   - Go to https://vercel.com
-   - Import your GitHub repository
-   - Vercel will auto-detect Next.js
-
-3. **Configure Environment Variables**
-   - Add all required environment variables (see above)
-
-4. **Deploy**
-   - Vercel will automatically deploy
-   - Build should now succeed
-
-5. **Run Database Migrations**
-   After first deployment, you need to push your Prisma schema:
-   ```bash
-   # Install Vercel CLI
-   npm i -g vercel
-
-   # Login to Vercel
-   vercel login
-
-   # Link your project
-   vercel link
-
-   # Run migrations using production database
-   npx prisma db push
-   ```
-
-## Troubleshooting
-
-### Build Fails with "Failed to collect page data"
-- ✅ Fixed: Dynamic route now properly configured
-
-### Database Connection Issues During Build
-- The build should succeed without database access
-- Database is only needed at runtime
-- Ensure `export const dynamic = 'force-dynamic'` is set
-
-### Prisma Client Not Generated
-- ✅ Fixed: `postinstall` script ensures Prisma generates client
-- If issues persist, add build command override in Vercel:
-  - Build Command: `prisma generate && next build`
-
-### Middleware Blocking Routes
-- ✅ Fixed: `/:code` route added to public routes
-- Short links will now work without authentication
-
-## Testing After Deployment
-
-1. **Test the homepage**: `https://your-app.vercel.app`
-2. **Test authentication**: Sign in/Sign up pages
-3. **Create a short link**: Use the dashboard
-4. **Test redirect**: Visit `https://your-app.vercel.app/[shortcode]`
-
-## Additional Configuration (Optional)
-
-### Custom Domain
-1. Go to Vercel Dashboard → Settings → Domains
-2. Add your custom domain
-3. Update DNS records as instructed
-
-### Build & Development Settings
-- **Build Command**: `npm run build` (default)
-- **Output Directory**: `.next` (default)
-- **Install Command**: `npm install` (default)
-
-## Support
-
-If you encounter issues:
-- Check Vercel deployment logs
-- Verify all environment variables are set
-- Ensure database is accessible from Vercel
-- Check Clerk webhook configuration if using webhooks
+For local development, make sure your `.env` file exists with the same variables. The `.env.example` file is provided as a template.
