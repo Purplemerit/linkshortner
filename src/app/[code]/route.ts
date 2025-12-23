@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
+// Mark this route as dynamic since we can't statically generate all short codes
+export const dynamic = 'force-dynamic';
+// Ensure this runs on serverless function, not edge
+export const runtime = 'nodejs';
+
 export async function GET(
     request: NextRequest,
-    { params }: { params: { code: string } }
+    { params }: { params: Promise<{ code: string }> }
 ) {
-    const code = params.code;
+    const { code } = await params;
 
     if (!code) {
         return NextResponse.json({ error: 'Missing code' }, { status: 400 });
@@ -41,6 +46,10 @@ export async function GET(
         return NextResponse.redirect(new URL(link.destination, request.url));
     } catch (error) {
         console.error('Redirection error:', error);
+        const msg = error && (error as any).message ? (error as any).message : String(error);
+        if (msg.includes("Can't reach database server") || msg.includes('PrismaClientInitializationError')) {
+            return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
+        }
         return NextResponse.redirect(new URL('/', request.url));
     }
 }

@@ -141,20 +141,20 @@ export default function Home() {
                 <div className="text-3xl mb-3">{feature.icon}</div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
                 <p className="text-gray-600 mb-4">{feature.desc}</p>
-                <a href="/features" className="text-purple-600 hover:text-purple-700 font-semibold">
+                <Link href="/features" className="text-purple-600 hover:text-purple-700 font-semibold">
                   Learn more →
-                </a>
+                </Link>
               </div>
             ))}
           </div>
 
           <div className="text-center">
-            <a
+            <Link
               href="/features"
               className="px-6 py-3 border-2 border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 font-semibold inline-block"
             >
               See All 50 Features →
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -185,9 +185,9 @@ export default function Home() {
                 <li className="flex items-center gap-2">✗ No custom domains</li>
                 <li className="flex items-center gap-2">✗ No team members</li>
               </ul>
-              <button className="w-full px-4 py-2 border-2 border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50">
+              <Link href="/sign-up" className="w-full inline-block px-4 py-2 border-2 border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50 text-center">
                 Get Started
-              </button>
+              </Link>
             </div>
 
             {/* Starter Tier */}
@@ -208,9 +208,9 @@ export default function Home() {
                 <li className="flex items-center gap-2">✓ QR codes</li>
                 <li className="flex items-center gap-2">✓ 3 team members</li>
               </ul>
-              <button className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">
+              <Link href="/sign-up" className="w-full inline-block px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold text-center">
                 Start Free Trial
-              </button>
+              </Link>
             </div>
 
             {/* Pro Tier */}
@@ -228,16 +228,16 @@ export default function Home() {
                 <li className="flex items-center gap-2">✓ Advanced team RBAC</li>
                 <li className="flex items-center gap-2">✓ API access</li>
               </ul>
-              <button className="w-full px-4 py-2 border-2 border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50">
+              <Link href="/enterprise" className="w-full inline-block px-4 py-2 border-2 border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 text-center">
                 Contact Sales
-              </button>
+              </Link>
             </div>
           </div>
 
           <div className="text-center mt-12">
-            <a href="/pricing" className="text-purple-600 hover:text-purple-700 font-semibold">
+            <Link href="/pricing" className="text-purple-600 hover:text-purple-700 font-semibold">
               See complete pricing →
-            </a>
+            </Link>
           </div>
         </div>
       </section>

@@ -6,7 +6,8 @@ const isPublicRoute = createRouteMatcher([
   '/sign-in(.*)',
   '/sign-up(.*)',
   '/api/links(.*)', // Temporarily public for testing, will lock down later
-  '/api/webhooks(.*)'
+  '/api/webhooks(.*)',
+  '/:code' // Allow short link redirects without auth
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
