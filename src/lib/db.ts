@@ -2,7 +2,24 @@ import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
     try {
-        return new PrismaClient();
+        if (!process.env.DATABASE_URL) {
+            console.error('CRITICAL: DATABASE_URL environment variable is not set!');
+            console.error('Please set DATABASE_URL in your Vercel environment variables.');
+            console.error('Current DATABASE_URL:', process.env.DATABASE_URL);
+            throw new Error('DATABASE_URL is not configured');
+        }
+
+        console.log('Initializing Prisma Client...');
+        console.log('DATABASE_URL configured:', process.env.DATABASE_URL ? 'YES' : 'NO');
+
+        return new PrismaClient({
+            log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+            datasources: {
+                db: {
+                    url: process.env.DATABASE_URL,
+                },
+            },
+        });
     } catch (err) {
         console.error('PrismaClient initialization error:', err);
         throw err;
@@ -16,11 +33,6 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
-
-if (!process.env.DATABASE_URL) {
-    console.warn('Warning: DATABASE_URL is not set. Prisma will fail to connect in production.\n' +
-        'Set DATABASE_URL in your hosting provider (no surrounding quotes).');
-}
 
 export default prisma;
 
