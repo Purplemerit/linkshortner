@@ -3,9 +3,20 @@ import prisma from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
 import fs from 'fs';
 import path from 'path';
+import { dummyLinks } from '@/lib/dummy-data';
 
 // Reserved codes that cannot be used
 const reservedCodes = ['api', 'dashboard', 'login', 'register', 'admin', 'settings'];
+
+function getRequestOrigin(request: NextRequest) {
+  const forwardedProto = request.headers.get('x-forwarded-proto');
+  const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host');
+  if (forwardedHost) {
+    const proto = forwardedProto || (request.nextUrl?.protocol ? request.nextUrl.protocol.replace(':', '') : 'https');
+    return `${proto}://${forwardedHost.replace(/\/$/, '')}`;
+  }
+  return request.nextUrl?.origin || '';
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,18 +26,29 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const links = await prisma.link.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-    });
+    try {
+      const links = await prisma.link.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+      });
 
-    // Format for frontend
-    const formattedLinks = links.map((link: any) => ({
-      ...link,
-      shortUrl: `${request.nextUrl.origin}/${link.shortCode}`,
-    }));
+      // Format for frontend — build origin using forwarded headers when available
+      const origin = getRequestOrigin(request);
+      const formattedLinks = links.map((link: any) => ({
+        ...link,
+        shortUrl: `${origin}/${link.shortCode}`,
+      }));
 
-    return NextResponse.json(formattedLinks);
+      return NextResponse.json(formattedLinks);
+    } catch (dbErr) {
+      console.error('DB error while fetching links — falling back to dummy data:', dbErr);
+      const origin = getRequestOrigin(request);
+      const formattedLinks = dummyLinks.map((link) => ({
+        ...link,
+        shortUrl: `${origin}/${link.shortCode}`,
+      }));
+      return NextResponse.json(formattedLinks);
+    }
   } catch (error) {
     console.error('Error fetching links:', error);
     return NextResponse.json(
@@ -147,9 +169,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const origin = getRequestOrigin(request);
     return NextResponse.json({
       ...newLink,
-      shortUrl: `${request.nextUrl.origin}/${newLink.shortCode}`,
+      shortUrl: `${origin}/${newLink.shortCode}`,
     }, { status: 201 });
 
   } catch (error) {

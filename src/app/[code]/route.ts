@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import { dummyLinks } from '@/lib/dummy-data';
 
 // Mark this route as dynamic since we can't statically generate all short codes
 export const dynamic = 'force-dynamic';
@@ -48,6 +49,11 @@ export async function GET(
         console.error('Redirection error:', error);
         const msg = error && (error as any).message ? (error as any).message : String(error);
         if (msg.includes("Can't reach database server") || msg.includes('PrismaClientInitializationError')) {
+            // Try to fallback to dummy links for basic redirect functionality
+            const fallback = dummyLinks.find((l) => l.shortCode === code);
+            if (fallback) {
+                return NextResponse.redirect(new URL(fallback.destination, request.url));
+            }
             return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
         }
         return NextResponse.redirect(new URL('/', request.url));
