@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { dummyLinks } from '@/lib/dummy-data';
-
-// In-memory store
-let linksStore = [...dummyLinks];
+import prisma from '@/lib/db';
+import { auth } from '@clerk/nextjs/server';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { tags } = body;
 
@@ -20,22 +24,29 @@ export async function POST(
       );
     }
 
-    // Find and update link
-    const linkIndex = linksStore.findIndex((link) => link.id === id);
-    if (linkIndex === -1) {
-      return NextResponse.json(
-        { error: 'Link not found' },
-        { status: 404 }
-      );
+    const link = await prisma.link.findUnique({
+      where: { id },
+    });
+
+    if (!link) {
+      return NextResponse.json({ error: 'Link not found' }, { status: 404 });
     }
 
-    linksStore[linkIndex].tags = tags;
+    if (link.userId !== userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    const updatedLink = await prisma.link.update({
+      where: { id },
+      data: { tagsJson: JSON.stringify(tags) },
+    });
 
     return NextResponse.json({
-      id,
-      tags: linksStore[linkIndex].tags,
+      id: updatedLink.id,
+      tags: tags,
     });
   } catch (error) {
+    console.error('Error updating tags:', error);
     return NextResponse.json(
       { error: 'Failed to update tags' },
       { status: 500 }

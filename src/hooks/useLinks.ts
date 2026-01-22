@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { api } from '@/lib/api';
+import { api, transformLink } from '@/lib/api';
 import { Link } from '@/lib/dummy-data';
 
 export function useLinks() {
@@ -14,7 +14,9 @@ export function useLinks() {
     if (response.error) {
       setError(response.error);
     } else if (response.data) {
-      setLinks(response.data as Link[]);
+      // Transform links to parse tagsJson
+      const transformedLinks = (response.data as any[]).map(transformLink);
+      setLinks(transformedLinks as Link[]);
     }
     setLoading(false);
   };

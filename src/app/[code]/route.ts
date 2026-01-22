@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { dummyLinks } from '@/lib/dummy-data';
+import { UAParser } from 'ua-parser-js';
 
 // Mark this route as dynamic since we can't statically generate all short codes
 export const dynamic = 'force-dynamic';
@@ -23,39 +23,57 @@ export async function GET(
         });
 
         if (!link) {
-            return NextResponse.redirect(new URL('/', request.url)); // Or a custom 404 page
+            return NextResponse.redirect(new URL('/', request.url));
         }
 
-        // Async analytics logging (fire and forget)
-        // In a real production serverless environment, use Inngest or QStash
-        // to ensure this runs reliably. For now, we just await it or let it run.
-        await prisma.link.update({
-            where: { id: link.id },
-            data: {
-                clicks: { increment: 1 },
-                analytics: {
-                    create: {
-                        country: request.geo?.country || 'Unknown',
-                        city: request.geo?.city || 'Unknown',
-                        device: request.headers.get('user-agent') || 'Unknown',
-                        referrer: request.headers.get('referer') || 'Direct',
+        // Check if link is active
+        if (link.active === false) {
+            return NextResponse.json({ error: 'Link is disabled' }, { status: 410 });
+        }
+
+        // Check expiration
+        if (link.expiresAt && new Date(link.expiresAt) < new Date()) {
+            return NextResponse.json({ error: 'Link has expired' }, { status: 410 });
+        }
+
+        // Check Password Protection
+        if (link.password) {
+            return NextResponse.redirect(new URL(`/protected/${code}`, request.url));
+        }
+
+        // Parse User Agent
+        const uaString = request.headers.get('user-agent') || '';
+        const parser = new UAParser(uaString);
+        const device = parser.getDevice().type || 'desktop'; // 'mobile', 'tablet', etc.
+        const browser = parser.getBrowser().name || 'Unknown';
+        const os = parser.getOS().name || 'Unknown';
+
+        // Log analytics
+        try {
+            await prisma.link.update({
+                where: { id: link.id },
+                data: {
+                    clicks: { increment: 1 },
+                    analytics: {
+                        create: {
+                            country: request.geo?.country || 'Unknown',
+                            city: request.geo?.city || 'Unknown',
+                            device: device,
+                            browser: browser,
+                            os: os,
+                            referrer: request.headers.get('referer') || 'Direct',
+                            ipHash: request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+                        },
                     },
                 },
-            },
-        });
+            });
+        } catch (analyticsError) {
+            console.error('Failed to log analytics:', analyticsError);
+        }
 
         return NextResponse.redirect(new URL(link.destination, request.url));
     } catch (error) {
         console.error('Redirection error:', error);
-        const msg = error && (error as any).message ? (error as any).message : String(error);
-        if (msg.includes("Can't reach database server") || msg.includes('PrismaClientInitializationError')) {
-            // Try to fallback to dummy links for basic redirect functionality
-            const fallback = dummyLinks.find((l) => l.shortCode === code);
-            if (fallback) {
-                return NextResponse.redirect(new URL(fallback.destination, request.url));
-            }
-            return NextResponse.json({ error: 'Database unavailable' }, { status: 503 });
-        }
         return NextResponse.redirect(new URL('/', request.url));
     }
 }

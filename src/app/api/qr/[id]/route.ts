@@ -1,18 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { dummyLinks } from '@/lib/dummy-data';
+import prisma from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const searchParams = request.nextUrl.searchParams;
     const size = parseInt(searchParams.get('size') || '300');
     const format = searchParams.get('format') || 'png';
 
-    // Find link
-    const link = dummyLinks.find((l) => l.id === id || l.shortCode === id);
+    // Find link by ID or shortCode
+    const link = await prisma.link.findFirst({
+      where: {
+        OR: [
+          { id: id },
+          { shortCode: id }
+        ]
+      }
+    });
+
     if (!link) {
       return NextResponse.json(
         { error: 'Link not found' },
@@ -20,14 +28,21 @@ export async function GET(
       );
     }
 
+    // Dynamic origin
+    const protocol = request.headers.get('x-forwarded-proto') || 'https';
+    const host = request.headers.get('host') || '';
+    const origin = `${protocol}://${host}`;
+    const shortUrl = `${origin}/${link.shortCode}`;
+
     // In production, this would generate the QR code server-side
     // For now, return the URL to generate client-side
     return NextResponse.json({
-      qrUrl: link.shortUrl,
+      qrUrl: shortUrl,
       size,
       format,
     });
   } catch (error) {
+    console.error('QR Error:', error);
     return NextResponse.json(
       { error: 'Failed to generate QR code' },
       { status: 500 }
