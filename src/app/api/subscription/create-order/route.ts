@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Razorpay from 'razorpay';
+export const dynamic = 'force-dynamic';
+
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/db';
 
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID!,
-    key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
-
+// Initialize Razorpay lazily inside the handler
 export async function POST(request: NextRequest) {
     try {
+        const Razorpay = require('razorpay');
+        const razorpay = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID!,
+            key_secret: process.env.RAZORPAY_KEY_SECRET!,
+        });
         const { userId } = await auth();
         if (!userId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
