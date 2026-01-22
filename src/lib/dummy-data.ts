@@ -12,6 +12,10 @@ export interface Link {
   maxClicks: number | null;
   active: boolean;
   notes?: string;
+  password?: string | null;
+  workspaceId?: string | null;
+  campaignId?: string | null;
+  campaign?: { id: string; name: string } | null;
 }
 
 export interface AnalyticsData {
@@ -26,6 +30,7 @@ export interface AnalyticsData {
   };
   clicksByDay: number[];
   topBrowsers: Array<{ browser: string; clicks: number }>;
+  topOS: Array<{ os: string; clicks: number }>;
 }
 
 export interface TeamMember {
@@ -110,6 +115,13 @@ export const dummyAnalytics: AnalyticsData = {
     { browser: 'Firefox', clicks: 180 },
     { browser: 'Edge', clicks: 150 },
     { browser: 'Opera', clicks: 100 }
+  ],
+  topOS: [
+    { os: 'Windows', clicks: 500 },
+    { os: 'iOS', clicks: 350 },
+    { os: 'Android', clicks: 200 },
+    { os: 'macOS', clicks: 150 },
+    { os: 'Linux', clicks: 50 }
   ]
 };
 

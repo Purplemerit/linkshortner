@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { dummyLinks, reservedCodes } from '@/lib/dummy-data';
+import prisma from '@/lib/db';
+import { reservedCodes } from '@/lib/dummy-data';
 
 function getRequestOrigin(request: NextRequest) {
   const forwardedProto = request.headers.get('x-forwarded-proto');
@@ -10,9 +11,6 @@ function getRequestOrigin(request: NextRequest) {
   }
   return request.nextUrl?.origin || '';
 }
-
-// In-memory store
-let linksStore = [...dummyLinks];
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,10 +33,12 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Check if exists
-    const exists = linksStore.some((link) => link.shortCode.toLowerCase() === code.toLowerCase());
+    // Check if exists in DB
+    const existing = await prisma.link.findUnique({
+      where: { shortCode: code }
+    });
 
-    if (exists) {
+    if (existing) {
       // Generate suggestion
       const suggestion = `${code}-${new Date().getFullYear()}`;
       return NextResponse.json({
@@ -55,6 +55,7 @@ export async function GET(request: NextRequest) {
       shortUrl: `${origin}/${code}`,
     });
   } catch (error) {
+    console.error('Check availability error:', error);
     return NextResponse.json(
       { error: 'Failed to check availability' },
       { status: 500 }

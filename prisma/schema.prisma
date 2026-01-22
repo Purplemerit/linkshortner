@@ -5,16 +5,169 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// For development: SQLite (fast, no setup needed)
+// For production: PostgreSQL (AWS RDS or Supabase)
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  name      String?
+  apiKey    String?  @unique
+  apiCalls  Int      @default(0)
+
+  // Email verification fields
+  emailVerified     Boolean  @default(false)
+  emailVerifiedAt   DateTime?
+  emailDomain       String?
+
+  // Onboarding
+  onboardingComplete Boolean @default(false)
+
   links     Link[]
+  campaigns Campaign[]
+  domains   Domain[]
+  subscriptions Subscription[]
+  payments  Payment[]
+  
+  // Team & Collaboration
+  ownedTeams        Team[]              @relation("TeamOwner")
+  teamMemberships   TeamMember[]
+  workspaces        Workspace[]         @relation("WorkspaceOwner")
+  workspaceMemberships WorkspaceMember[]
+  activityLogs      ActivityLog[]
+  
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Team {
+  id              String          @id @default(cuid())
+  name            String
+  description     String?
+  slug            String          @unique
+  
+  // Owner relationship
+  ownerId         String
+  owner           User            @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Members
+  members         TeamMember[]
+  
+  // Workspaces within team
+  workspaces      Workspace[]
+  
+  // Settings
+  avatar          String?
+  settings        String?         // JSON string for team settings
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model TeamMember {
+  id              String          @id @default(cuid())
+  
+  // User & Team relationship
+  // User & Team relationship
+  userId          String?
+  user            User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  teamId          String
+  team            Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  // Role
+  role            String          @default("member")  // owner, admin, editor, viewer
+  status          String          @default("active")  // active, invited, blocked
+  
+  // Activity
+  joinedAt        DateTime        @default(now())
+  invitedAt       DateTime?
+  invitedBy       String?
+  invitedEmail    String?
+  
+  @@unique([userId, teamId])
+  @@unique([invitedEmail, teamId])
+}
+
+model Workspace {
+  id              String          @id @default(cuid())
+  name            String
+  description     String?
+  slug            String
+  
+  // Owner relationship
+  ownerId         String
+  owner           User            @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Team relationship (optional - can be standalone)
+  teamId          String?
+  team            Team?           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  // Members
+  members         WorkspaceMember[]
+  
+  // Links in workspace
+  links           Link[]
+  
+  // Settings
+  color           String?
+  icon            String?
+  settings        String?         // JSON string
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@unique([slug, teamId])
+}
+
+model WorkspaceMember {
+  id              String          @id @default(cuid())
+  
+  // User & Workspace relationship
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  workspaceId     String
+  workspace       Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  // Role
+  role            String          @default("editor")  // owner, admin, editor, viewer
+  status          String          @default("active")
+  
+  // Activity
+  joinedAt        DateTime        @default(now())
+  invitedAt       DateTime?
+  invitedBy       String?
+  
+  @@unique([userId, workspaceId])
+}
+
+model ActivityLog {
+  id              String          @id @default(cuid())
+  
+  // User who performed the action
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Action details
+  action          String          // 'link_created', 'link_edited', 'link_deleted', 'member_added', etc.
+  resourceType    String          // 'link', 'team', 'workspace', 'member'
+  resourceId      String?         // ID of the affected resource
+  resourceName    String?         // Name of the resource (for reference)
+  
+  // Change tracking
+  changes         String?         // JSON string of what changed
+  metadata        String?         // Additional JSON data
+  
+  // IP and user agent
+  ipAddress       String?
+  userAgent       String?
+  
+  createdAt       DateTime        @default(now())
 }
 
 model Link {
@@ -24,16 +177,46 @@ model Link {
   createdAt   DateTime @default(now())
   clicks      Int      @default(0)
   userId      String?
-  user        User?    @relation(fields: [userId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Workspace reference
+  workspaceId String?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
   analytics   Analytics[]
   
   // Additional fields for features
-  tags        String[]
+  // Store tags as JSON string since SQLite doesn't support arrays
+  tagsJson    String?  @default("[]")
   protected   Boolean  @default(false)
   password    String?
   expiresAt   DateTime?
   maxClicks   Int?
   active      Boolean  @default(true)
+  notes       String?
+  
+  // Campaign relationship
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  links       Link[]
+  
+  // Default UTM parameters for links created in this campaign
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([userId, name])
 }
 
 model Analytics {
@@ -48,4 +231,40 @@ model Analytics {
   os        String?
   referrer  String?
   ipHash    String?  // Anonymized IP for unique visitor counting
+}
+
+model Subscription {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  plan            String    // 'FREE', 'STARTER', 'PROFESSIONAL'
+  status          String    // 'ACTIVE', 'CANCELLED', 'PAST_DUE'
+  startDate       DateTime  @default(now())
+  endDate         DateTime?
+  razorpaySubId   String?   @unique
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Payment {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  amount          Float
+  currency        String    @default("INR")
+  status          String    // 'PENDING', 'SUCCESS', 'FAILED'
+  razorpayOrderId String    @unique
+  razorpayPaymentId String?
+  razorpaySignature String?
+  createdAt       DateTime  @default(now())
+}
+
+model Domain {
+  id         String   @id @default(cuid())
+  domain     String   @unique
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  verified   Boolean  @default(false)
+  verifiedAt DateTime?
+  createdAt  DateTime @default(now())
 }

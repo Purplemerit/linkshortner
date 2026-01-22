@@ -97,3 +97,36 @@ export const api = {
   },
 };
 
+/**
+ * Parse tagsJson string to string array
+ * Handles both old 'tags' field and new 'tagsJson' field
+ */
+export function parseTags(link: any): string[] {
+  // If tags already exists as array, return it
+  if (Array.isArray(link.tags)) {
+    return link.tags;
+  }
+  
+  // If tagsJson exists, parse it
+  if (link.tagsJson) {
+    try {
+      return JSON.parse(link.tagsJson);
+    } catch (e) {
+      console.error('Failed to parse tagsJson:', e);
+      return [];
+    }
+  }
+  
+  return [];
+}
+
+/**
+ * Transform database link to frontend Link interface
+ * Converts tagsJson string to tags array
+ */
+export function transformLink(dbLink: any) {
+  return {
+    ...dbLink,
+    tags: parseTags(dbLink),
+  };
+}
