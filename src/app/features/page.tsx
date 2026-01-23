@@ -1,12 +1,11 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 
-export const metadata: Metadata = {
-  title: 'Features - short.link | 50+ URL Shortener Features',
-  description: 'Explore all 50+ features of short.link: link shortening, QR codes, analytics, custom domains, team collaboration, and more.',
-};
+
 
 export default function FeaturesPage() {
   const categories = [
@@ -157,12 +156,23 @@ export default function FeaturesPage() {
             Start with 100 free links per month. Upgrade anytime to unlock advanced features.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <Link
-              href="/sign-up"
-              className="px-6 sm:px-10 py-2 sm:py-4 bg-white text-purple-600 rounded-lg sm:rounded-xl hover:bg-gray-100 font-bold text-sm sm:text-base lg:text-lg shadow-lg hover:shadow-xl transition-all"
-            >
-              Start Free Trial
-            </Link>
+            <SignedOut>
+              <Link
+                href="/sign-up?redirect_url=/onboarding/choose-plan"
+                className="px-6 sm:px-10 py-2 sm:py-4 bg-white text-purple-600 rounded-lg sm:rounded-xl hover:bg-gray-100 font-bold text-sm sm:text-base lg:text-lg shadow-lg hover:shadow-xl transition-all"
+              >
+                Start Free Trial
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link
+                href="/dashboard"
+                className="px-6 sm:px-10 py-2 sm:py-4 bg-white text-purple-600 rounded-lg sm:rounded-xl hover:bg-gray-100 font-bold text-sm sm:text-base lg:text-lg shadow-lg hover:shadow-xl transition-all"
+              >
+                Go to Dashboard
+              </Link>
+            </SignedIn>
+
             <Link
               href="/pricing"
               className="px-6 sm:px-10 py-2 sm:py-4 border-2 border-white text-white rounded-lg sm:rounded-xl hover:bg-purple-700 font-bold text-sm sm:text-base lg:text-lg transition-all"

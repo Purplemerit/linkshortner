@@ -110,7 +110,8 @@ export default function DocsPage() {
               <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 mb-2 sm:mb-3">1. Sign Up</h3>
               <p className="text-xs sm:text-sm lg:text-base text-gray-600 mb-2 sm:mb-4">
                 Create your free account at{' '}
-                <Link href="/sign-up" className="text-purple-600 hover:underline">short.link/sign-up</Link>
+                <Link href="/sign-up?redirect_url=/onboarding/choose-plan" className="text-purple-600 hover:underline">short.link/sign-up</Link>
+
               </p>
               <div className="bg-gray-900 text-gray-100 p-3 sm:p-4 rounded-lg font-mono text-xs sm:text-sm">
                 No credit card required • 100 free links per month

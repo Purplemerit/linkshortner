@@ -197,7 +197,8 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             <Link href="/blog" className="px-4 py-2 text-gray-600 hover:text-purple-600 font-semibold">Blog</Link>
             <Link href="/features" className="px-4 py-2 text-gray-600 hover:text-purple-600 font-semibold">Features</Link>
             <Link href="/pricing" className="px-4 py-2 text-gray-600 hover:text-purple-600 font-semibold">Pricing</Link>
-            <Link href="/sign-up" className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">Get Started</Link>
+            <Link href="/sign-up?redirect_url=/onboarding/choose-plan" className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">Get Started</Link>
+
           </div>
         </div>
       </nav>
@@ -290,11 +291,12 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           </p>
           <div className="flex gap-4 flex-wrap">
             <Link
-              href="/sign-up"
+              href="/sign-up?redirect_url=/onboarding/choose-plan"
               className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold"
             >
               Start Free
             </Link>
+
             <Link
               href="/features"
               className="px-6 py-3 border-2 border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 font-semibold"

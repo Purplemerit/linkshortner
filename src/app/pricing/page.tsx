@@ -70,9 +70,10 @@ export default function PricingPage() {
 
   const handleSubscription = async (plan: string, amount: number) => {
     if (!isSignedIn) {
-      router.push('/sign-up');
+      router.push('/sign-up?redirect_url=/onboarding/choose-plan');
       return;
     }
+
 
     if (amount === 0) {
       router.push('/dashboard');

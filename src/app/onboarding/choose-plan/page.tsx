@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import Script from 'next/script';
 import { Check, Sparkles, Zap, Crown } from 'lucide-react';
 
@@ -64,11 +65,17 @@ const PLANS = [
     },
 ];
 
-export default function ChoosePlanPage() {
+import { Suspense } from 'react';
+
+function ChoosePlanContent() {
     const { user, isSignedIn, isLoaded } = useUser();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
     const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
+    const claimLinkId = searchParams.get('claim_link');
+
 
     useEffect(() => {
         if (isLoaded && !isSignedIn) {
@@ -90,8 +97,12 @@ export default function ChoosePlanPage() {
                 const res = await fetch('/api/user/complete-onboarding', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ plan: 'FREE' })
+                    body: JSON.stringify({
+                        plan: 'FREE',
+                        claimLinkId: claimLinkId
+                    })
                 });
+
 
                 if (!res.ok) {
                     const errData = await res.json();
@@ -145,8 +156,12 @@ export default function ChoosePlanPage() {
                         await fetch('/api/user/complete-onboarding', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ plan: planId })
+                            body: JSON.stringify({
+                                plan: planId,
+                                claimLinkId: claimLinkId
+                            })
                         });
+
                         router.push('/dashboard?welcome=true');
                     } else {
                         alert('Payment verification failed. Please try again.');
@@ -324,3 +339,16 @@ export default function ChoosePlanPage() {
         </div>
     );
 }
+
+export default function ChoosePlanPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-blue-50">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
+            </div>
+        }>
+            <ChoosePlanContent />
+        </Suspense>
+    );
+}
+
