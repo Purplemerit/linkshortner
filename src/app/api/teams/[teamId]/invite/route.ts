@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/db';
 import { sendEmail } from '@/lib/email';
+import { getBaseUrl } from '@/lib/baseUrl';
+
 
 export async function POST(
     request: NextRequest,
@@ -123,7 +125,8 @@ export async function POST(
 
         // Send Email
         // Log the "Link" for joining (simulation)
-        const joinLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/sign-up?email=${encodeURIComponent(email)}`;
+        const baseUrl = getBaseUrl();
+        const joinLink = `${baseUrl}/sign-up?email=${encodeURIComponent(email)}`;
 
         await sendEmail({
             to: email,

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import { getBaseUrl } from '@/lib/baseUrl';
+
 
 export async function GET(
   request: NextRequest,
@@ -29,9 +31,7 @@ export async function GET(
     }
 
     // Dynamic origin
-    const protocol = request.headers.get('x-forwarded-proto') || 'https';
-    const host = request.headers.get('host') || '';
-    const origin = `${protocol}://${host}`;
+    const origin = getBaseUrl();
     const shortUrl = `${origin}/${link.shortCode}`;
 
     // In production, this would generate the QR code server-side

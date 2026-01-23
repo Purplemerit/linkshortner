@@ -6,10 +6,7 @@ import { nanoid } from 'nanoid';
 // Reserved codes that cannot be used
 const reservedCodes = ['api', 'dashboard', 'login', 'register', 'admin', 'settings', 'features', 'pricing', 'contact', 'terms', 'privacy', 'docs', 'enterprise', 'comparison', 'blog', 'security', 'self-hosted', 'sign-in', 'sign-up'];
 
-function getBaseUrl() {
-  // Use environment variable for BASE_URL, fallback to localhost for development
-  return process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-}
+import { getBaseUrl } from '@/lib/baseUrl';
 
 export async function GET(request: NextRequest) {
   try {

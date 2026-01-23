@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
+import { getBaseUrl } from '@/lib/baseUrl';
+
 
 export async function GET(
     request: NextRequest,
@@ -28,9 +30,7 @@ export async function GET(
         }
 
         // Add full shortUrl for convenience
-        const protocol = request.headers.get('x-forwarded-proto') || 'https';
-        const host = request.headers.get('host') || '';
-        const origin = `${protocol}://${host}`;
+        const origin = getBaseUrl();
 
         return NextResponse.json({
             ...link,
