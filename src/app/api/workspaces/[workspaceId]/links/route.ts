@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/db';
 
-function getBaseUrl() {
-    return process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-}
+import { getBaseUrl } from '@/lib/baseUrl';
 
 export async function GET(
     request: NextRequest,

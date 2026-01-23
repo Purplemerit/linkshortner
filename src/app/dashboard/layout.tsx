@@ -15,13 +15,18 @@ export default async function DashboardLayout({
     }
 
     // Check onboarding status from database
-    const dbUser = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { onboardingComplete: true }
-    });
+    let dbUser = null;
+    try {
+        dbUser = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { onboardingComplete: true }
+        });
+    } catch (err) {
+        console.error('Dashboard Layout Prisma Error:', err);
+        // Fallback: If DB is unreachable, we'll redirect to onboarding to be safe
+    }
 
     // If user doesn't exist or hasn't completed onboarding, redirect them
-    // Note: If user doesn't exist in DB, they definitely haven't completed onboarding
     if (!dbUser || !dbUser.onboardingComplete) {
         redirect('/onboarding/choose-plan');
     }
