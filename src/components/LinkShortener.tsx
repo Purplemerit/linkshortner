@@ -116,9 +116,11 @@ export function LinkShortener() {
                 Want to track your clicks?
               </p>
               <p className="text-xs text-purple-700 mt-0.5">
-                <Link href="/sign-up" className="underline font-bold hover:text-purple-900">
+                <Link href="/sign-up?redirect_url=/onboarding/choose-plan" className="underline font-bold hover:text-purple-900">
+
                   Create a free account
                 </Link> to get analytics and manage your links.
+
               </p>
             </div>
           </div>
@@ -219,7 +221,9 @@ export function LinkShortener() {
                   </button>
                   {!isSignedIn && (
                     <Link
-                      href="/sign-up"
+                      href={`/sign-up?redirect_url=${encodeURIComponent(`/onboarding/choose-plan?claim_link=${result.id}`)}`}
+
+
                       className="flex-1 sm:flex-none px-6 py-2.5 bg-white border border-gray-200 text-purple-600 rounded-lg hover:bg-purple-50 hover:border-purple-200 font-semibold text-sm transition-all flex items-center justify-center gap-2"
                     >
                       ✨ Claim Link
@@ -231,7 +235,9 @@ export function LinkShortener() {
 
             {!isSignedIn && (
               <p className="text-center text-xs text-gray-400 mt-3 animate-pulse">
-                Links created anonymously expire in 24h. <Link href="/sign-up" className="underline hover:text-gray-600">Sign up to keep them forever.</Link>
+                Links created anonymously expire in 24h. <Link href={`/sign-up?redirect_url=${encodeURIComponent(`/onboarding/choose-plan?claim_link=${result.id}`)}`} className="underline hover:text-gray-600">Sign up to keep them forever.</Link>
+
+
               </p>
             )}
           </div>

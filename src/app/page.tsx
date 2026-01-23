@@ -5,7 +5,9 @@ import { LinkShortener } from '@/components/LinkShortener';
 import { Navbar } from '@/components/Navbar';
 import { BrandLogos } from '@/components/BrandLogos';
 import { Footer } from '@/components/Footer';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 import Link from 'next/link';
+
 
 export default function Home() {
   const [showDemoModal, setShowDemoModal] = useState(false);
@@ -75,12 +77,23 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/sign-up"
-                className="flex-1 px-6 py-3.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 font-semibold text-center transition-all hover:shadow-lg hover:-translate-y-0.5"
-              >
-                Start Free Trial
-              </Link>
+              <SignedOut>
+                <Link
+                  href="/sign-up?redirect_url=/onboarding/choose-plan"
+                  className="flex-1 px-6 py-3.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 font-semibold text-center transition-all hover:shadow-lg hover:-translate-y-0.5"
+                >
+                  Start Free Trial
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                <Link
+                  href="/dashboard"
+                  className="flex-1 px-6 py-3.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 font-semibold text-center transition-all hover:shadow-lg hover:-translate-y-0.5"
+                >
+                  Go to Dashboard
+                </Link>
+              </SignedIn>
+
               <button
                 onClick={() => setShowDemoModal(false)}
                 className="px-6 py-3.5 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold transition-colors"
@@ -124,12 +137,23 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-16">
-            <Link
-              href="/sign-up"
-              className="px-8 py-4 bg-white text-black rounded-xl hover:bg-gray-100 font-bold text-lg transition-transform hover:-translate-y-1 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]"
-            >
-              Get Started for Free
-            </Link>
+            <SignedOut>
+              <Link
+                href="/sign-up?redirect_url=/onboarding/choose-plan"
+                className="px-8 py-4 bg-white text-black rounded-xl hover:bg-gray-100 font-bold text-lg transition-transform hover:-translate-y-1 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]"
+              >
+                Get Started for Free
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link
+                href="/dashboard"
+                className="px-8 py-4 bg-white text-black rounded-xl hover:bg-gray-100 font-bold text-lg transition-transform hover:-translate-y-1 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]"
+              >
+                Go to Dashboard
+              </Link>
+            </SignedIn>
+
             <Link
               href="/pricing"
               className="px-8 py-4 bg-transparent border border-white/20 text-white rounded-xl hover:bg-white/10 font-bold text-lg transition-transform hover:-translate-y-1 backdrop-blur-sm"
@@ -332,7 +356,13 @@ export default function Home() {
               <h3 className="text-xl font-bold mb-2">Free</h3>
               <p className="text-gray-400 text-sm mb-6">For hobbyists and testing</p>
               <div className="text-4xl font-bold mb-6">₹0<span className="text-lg text-gray-500 font-normal">/mo</span></div>
-              <Link href="/sign-up" className="block w-full py-3 rounded-xl border border-white/20 hover:bg-white hover:text-black transition-all text-center font-semibold mb-8">Get Started</Link>
+              <SignedOut>
+                <Link href="/sign-up?redirect_url=/onboarding/choose-plan" className="block w-full py-3 rounded-xl border border-white/20 hover:bg-white hover:text-black transition-all text-center font-semibold mb-8">Get Started</Link>
+              </SignedOut>
+              <SignedIn>
+                <Link href="/dashboard" className="block w-full py-3 rounded-xl border border-white/20 hover:bg-white hover:text-black transition-all text-center font-semibold mb-8">Go to Dashboard</Link>
+              </SignedIn>
+
               <ul className="space-y-3 text-sm text-gray-300">
                 <li className="flex gap-2">✓ 100 links/mo</li>
                 <li className="flex gap-2">✓ Basic Analytics</li>
@@ -382,12 +412,23 @@ export default function Home() {
             Join 100,000+ marketers and creators using short.link to build stronger connections.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/sign-up"
-              className="px-10 py-5 bg-black text-white rounded-full hover:bg-gray-800 font-bold text-lg transition-all hover:scale-105 shadow-xl"
-            >
-              Get Started for Free
-            </Link>
+            <SignedOut>
+              <Link
+                href="/sign-up?redirect_url=/onboarding/choose-plan"
+                className="px-10 py-5 bg-black text-white rounded-full hover:bg-gray-800 font-bold text-lg transition-all hover:scale-105 shadow-xl"
+              >
+                Get Started for Free
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link
+                href="/dashboard"
+                className="px-10 py-5 bg-black text-white rounded-full hover:bg-gray-800 font-bold text-lg transition-all hover:scale-105 shadow-xl"
+              >
+                Go to Dashboard
+              </Link>
+            </SignedIn>
+
           </div>
           <p className="mt-8 text-sm text-gray-400">No credit card required • Cancel anytime</p>
         </div>

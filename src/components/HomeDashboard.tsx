@@ -6,10 +6,13 @@ import { Link, Copy, Check, Download, ArrowRight, TrendingUp, MousePointer, Glob
 
 interface HomeDashboardProps {
     onLinkCreated?: () => void;
+    onTabChange?: (tab: 'home' | 'links' | 'qr' | 'analytics') => void;
     availableWorkspaces?: any[];
 }
 
-export function HomeDashboard({ onLinkCreated, availableWorkspaces = [] }: HomeDashboardProps) {
+
+export function HomeDashboard({ onLinkCreated, onTabChange, availableWorkspaces = [] }: HomeDashboardProps) {
+
     const [activeMode, setActiveMode] = useState<'link' | 'qr'>('link');
     const [url, setUrl] = useState('');
     const [customCode, setCustomCode] = useState('');
@@ -333,7 +336,8 @@ export function HomeDashboard({ onLinkCreated, availableWorkspaces = [] }: HomeD
             {/* Quick Tips */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button
-                    onClick={() => window.location.href = '/dashboard?tab=links'}
+                    onClick={() => onTabChange?.('links')}
+
                     className="text-left bg-gradient-to-br from-purple-50 to-white border border-purple-100 rounded-xl p-5 hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer group"
                 >
                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -347,7 +351,8 @@ export function HomeDashboard({ onLinkCreated, availableWorkspaces = [] }: HomeD
                 </button>
 
                 <button
-                    onClick={() => window.location.href = '/dashboard?tab=analytics'}
+                    onClick={() => onTabChange?.('analytics')}
+
                     className="text-left bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-xl p-5 hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer group"
                 >
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -361,7 +366,8 @@ export function HomeDashboard({ onLinkCreated, availableWorkspaces = [] }: HomeD
                 </button>
 
                 <button
-                    onClick={() => window.location.href = '/dashboard?tab=qr'}
+                    onClick={() => onTabChange?.('qr')}
+
                     className="text-left bg-gradient-to-br from-green-50 to-white border border-green-100 rounded-xl p-5 hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer group"
                 >
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">

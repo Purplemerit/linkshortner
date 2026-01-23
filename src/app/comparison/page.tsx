@@ -1,11 +1,9 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 
-export const metadata: Metadata = {
-  title: 'Comparison - short.link vs Bitly, Short.io | URL Shortener Comparison',
-  description: 'Compare short.link with Bitly, Short.io, and Rebrandly. See why short.link offers the best features at the lowest price.',
-};
 
 export default function ComparisonPage() {
   const features = [
@@ -160,12 +158,23 @@ export default function ComparisonPage() {
             Import your existing links from any platform. Start free, upgrade anytime.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <Link
-              href="/sign-up"
-              className="px-6 sm:px-8 py-2 sm:py-4 bg-white text-purple-600 rounded-lg hover:bg-gray-100 font-bold text-sm sm:text-base transition-colors"
-            >
-              Start Free Trial
-            </Link>
+            <SignedOut>
+              <Link
+                href="/sign-up?redirect_url=/onboarding/choose-plan"
+                className="px-6 sm:px-8 py-2 sm:py-4 bg-white text-purple-600 rounded-lg hover:bg-gray-100 font-bold text-sm sm:text-base transition-colors"
+              >
+                Start Free Trial
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link
+                href="/dashboard"
+                className="px-6 sm:px-8 py-2 sm:py-4 bg-white text-purple-600 rounded-lg hover:bg-gray-100 font-bold text-sm sm:text-base transition-colors"
+              >
+                Go to Dashboard
+              </Link>
+            </SignedIn>
+
             <Link
               href="/contact"
               className="px-6 sm:px-8 py-2 sm:py-4 border-2 border-white text-white rounded-lg hover:bg-purple-700 font-bold text-sm sm:text-base transition-colors"

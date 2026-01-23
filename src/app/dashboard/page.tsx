@@ -339,11 +339,13 @@ export default function DashboardPage() {
         {activeTab === 'home' && (
           <HomeDashboard
             availableWorkspaces={availableWorkspaces}
+            onTabChange={handleTabChange}
             onLinkCreated={() => {
               fetchLinks();
               // Optionally show a toast or notification
             }}
           />
+
         )}
 
         {/* Links Tab */}

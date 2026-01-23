@@ -16,18 +16,22 @@ export default async function DashboardLayout({
 
     // Check onboarding status from database
     let dbUser = null;
+    let connectionError = false;
+
     try {
         dbUser = await prisma.user.findUnique({
             where: { id: userId },
             select: { onboardingComplete: true }
         });
     } catch (err) {
-        console.error('Dashboard Layout Prisma Error:', err);
-        // Fallback: If DB is unreachable, we'll redirect to onboarding to be safe
+        console.error('Dashboard Layout Connection Error:', err);
+        connectionError = true;
     }
 
-    // If user doesn't exist or hasn't completed onboarding, redirect them
-    if (!dbUser || !dbUser.onboardingComplete) {
+    // ONLY redirect if we successfully queried the DB and found it's incomplete.
+    // If the DB is down (connectionError), we'll let the page load so components 
+    // can show their own localized error states rather than looping the user.
+    if (!connectionError && (!dbUser || !dbUser.onboardingComplete)) {
         redirect('/onboarding/choose-plan');
     }
 
