@@ -39,7 +39,7 @@ export function CreateModal({ isOpen, onClose }: CreateModalProps) {
 
                 <div className="p-6 pt-4">
                     {/* Main Options */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <button
                             onClick={() => handleCreate('link')}
                             className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-all group text-left"
@@ -66,58 +66,9 @@ export function CreateModal({ isOpen, onClose }: CreateModalProps) {
                             </div>
                             <span className="ml-auto text-xs font-mono text-gray-400 border border-gray-200 px-1.5 rounded">Q</span>
                         </button>
-
-                        <button
-                            onClick={() => handleCreate('page')}
-                            className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-blue-600 hover:bg-blue-50 transition-all group text-left"
-                        >
-                            <div className="p-2 bg-purple-100 text-purple-600 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                                <FileText size={20} />
-                            </div>
-                            <div>
-                                <span className="font-bold text-gray-900 block">Link Page</span>
-                            </div>
-                        </button>
-                    </div>
-
-                    <div className="relative flex py-2 items-center">
-                        <div className="flex-grow border-t border-gray-200"></div>
-                        <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">OR</span>
-                        <div className="flex-grow border-t border-gray-200"></div>
-                    </div>
-
-                    {/* AI Section */}
-                    <div className="mt-6">
-                        <div className="flex items-center gap-2 mb-3">
-                            <Sparkles size={18} className="text-purple-600 fill-current" />
-                            <h3 className="font-bold text-gray-900 text-lg">Create with AI</h3>
-                        </div>
-
-                        <p className="text-sm text-gray-600 mb-3">Describe what you want to do, we&apos;ll help you create it...</p>
-
-                        <div className="relative">
-                            <textarea
-                                className="w-full h-24 p-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 outline-none resize-none transition-all"
-                                placeholder="Describe what you want to do, we'll help you create it..."
-                            />
-                            <button className="absolute bottom-4 right-4 p-2 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed">
-                                <ArrowRight size={16} />
-                            </button>
-                        </div>
-
-                        {/* Chips */}
-                        <div className="flex flex-wrap gap-2 mt-4">
-                            {['Shorten a link', 'Drive offline to online engagement', 'Generate many links', 'Design a QR Code'].map((chip) => (
-                                <button
-                                    key={chip}
-                                    className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-full text-xs font-medium text-gray-600 hover:bg-gray-100 hover:border-gray-300 transition-colors"
-                                >
-                                    {chip}
-                                </button>
-                            ))}
-                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
     );

@@ -277,12 +277,12 @@ export async function POST(request: NextRequest) {
         destination,
         user: userId ? { connect: { id: userId } } : undefined,
         tagsJson: tags ? JSON.stringify(tags) : JSON.stringify([]),
-        workspaceId: workspaceId || undefined,
-        campaignId: campaignId || undefined,
+        workspace: workspaceId ? { connect: { id: workspaceId } } : undefined,
+        campaign: campaignId ? { connect: { id: campaignId } } : undefined,
         expiresAt: !userId ? new Date(Date.now() + 24 * 60 * 60 * 1000) : undefined,
       },
-      // Include campaign in result if possible, but standard result is fine
     });
+
 
 
     const baseUrl = getBaseUrl();

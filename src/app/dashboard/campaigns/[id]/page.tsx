@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Trash2, Calendar, Link as LinkIcon, ExternalLink, BarChart2 } from 'lucide-react';
+import { ArrowLeft, Trash2, Calendar, Link as LinkIcon, ExternalLink, BarChart2, Plus } from 'lucide-react';
+
 import { format } from 'date-fns';
 
 interface LinkData {
@@ -113,7 +114,14 @@ export default function CampaignDetailsPage({ params }: { params: { id: string }
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
                 <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
                     <h3 className="font-bold text-gray-900">Campaign Links</h3>
+                    <Link
+                        href={`/dashboard?tab=links&campaignId=${campaign.id}`}
+                        className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs font-bold hover:bg-purple-700 flex items-center gap-1.5 transition-colors shadow-sm"
+                    >
+                        <Plus size={14} /> Add Link
+                    </Link>
                 </div>
+
                 {campaign.links.length === 0 ? (
                     <div className="p-12 text-center text-gray-500">
                         No links in this campaign yet.

@@ -197,12 +197,21 @@ export default function CampaignsPage() {
                                 <div className="text-sm text-gray-600">
                                     <strong>{campaign._count.links}</strong> links
                                 </div>
-                                <Link
-                                    href={`/dashboard/campaigns/${campaign.id}`} // Details page
-                                    className="text-purple-600 hover:text-purple-700 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform"
-                                >
-                                    View Details <ExternalLink size={14} />
-                                </Link>
+                                <div className="flex gap-3">
+                                    <Link
+                                        href={`/dashboard?tab=links&campaignId=${campaign.id}`}
+                                        className="text-purple-600 hover:text-purple-700 text-sm font-bold flex items-center gap-1 bg-purple-50 px-3 py-1.5 rounded-lg transition-all"
+                                    >
+                                        <Plus size={14} /> Add Link
+                                    </Link>
+                                    <Link
+                                        href={`/dashboard/campaigns/${campaign.id}`} // Details page
+                                        className="text-gray-600 hover:text-gray-900 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform px-2"
+                                    >
+                                        Details <ExternalLink size={14} />
+                                    </Link>
+                                </div>
+
                             </div>
                         </div>
                     ))}

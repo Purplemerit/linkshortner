@@ -18,8 +18,11 @@ import {
     Home,
     FolderOpen,
     Globe,
-    Lock
+    Lock,
+    LogOut
 } from 'lucide-react';
+
+
 
 import { CreateModal } from '@/components/CreateModal';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -43,7 +46,8 @@ export default function DashboardClient({
         { href: '/dashboard?tab=analytics', label: 'Analytics', icon: plan?.name === 'FREE' ? Lock : BarChart2, badge: plan?.name === 'FREE' ? 'PRO' : undefined, badgeColor: plan?.name === 'FREE' ? 'bg-gray-100 text-gray-500' : undefined },
         { href: '/dashboard/campaigns', label: 'Campaigns', icon: FolderOpen },
         { href: '/dashboard/domains', label: 'Custom domains', icon: plan?.name === 'FREE' ? Lock : Globe, badge: plan?.name === 'FREE' ? 'PRO' : 'TRY IT', badgeColor: plan?.name === 'FREE' ? 'bg-gray-100 text-gray-500' : 'bg-purple-100 text-purple-600' },
-        { href: '/dashboard/team-collaboration', label: 'Teams & Workspaces', icon: Users },
+        { href: '/dashboard/team-collaboration', label: 'Teams & Workspaces', icon: Users, badge: plan?.name === 'FREE' ? 'PRO' : undefined, badgeColor: plan?.name === 'FREE' ? 'bg-gray-100 text-gray-500' : undefined },
+
         { href: '/dashboard/settings', label: 'Settings', icon: Settings },
     ];
 
@@ -129,9 +133,28 @@ export default function DashboardClient({
                     </nav>
 
                     {/* Mobile Profile Trigger */}
-                    <div className="p-4 border-t border-gray-200 md:hidden">
-                        {/* Mobile interactions */}
+                    <div className="p-4 border-t border-gray-200 mt-auto">
+                        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <div className="flex items-center gap-3">
+                                <UserButton afterSignOutUrl="/" />
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-bold text-gray-900 truncate max-w-[100px]">Account</span>
+                                    <span className="text-[10px] text-gray-500 uppercase font-bold">{plan?.name}</span>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    // Force clear cookies/storage if needed, but Clerk handles this
+                                    window.location.href = "/sign-in";
+                                }}
+                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Sign Out"
+                            >
+                                <LogOut size={18} />
+                            </button>
+                        </div>
                     </div>
+
                 </div>
             </aside>
 

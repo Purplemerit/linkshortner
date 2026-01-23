@@ -14,16 +14,25 @@ const prismaClientSingleton = () => {
         console.log('Environment:', process.env.NODE_ENV);
         console.log('Running on Vercel:', process.env.VERCEL || 'NO');
 
+        let databaseUrl = process.env.DATABASE_URL;
+
+        // Fix for "prepared statement already exists" error when using connection poolers like PgBouncer
+        if (databaseUrl && !databaseUrl.includes('pgbouncer=true') && (databaseUrl.includes('postgres') || databaseUrl.includes('supabase'))) {
+            databaseUrl += (databaseUrl.includes('?') ? '&' : '?') + 'pgbouncer=true';
+            console.log('Appended pgbouncer=true to DATABASE_URL for connection pooling compatibility');
+        }
+
         return new PrismaClient({
             log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
             datasources: {
                 db: {
-                    url: process.env.DATABASE_URL,
+                    url: databaseUrl,
                 },
             },
             // Optimize for serverless
             errorFormat: 'minimal',
         });
+
     } catch (err) {
         console.error('PrismaClient initialization error:', err);
         console.error('Error details:', {
