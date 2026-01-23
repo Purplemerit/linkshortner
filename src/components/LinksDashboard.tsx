@@ -98,8 +98,9 @@ function LinkDetailsModal({ link, onClose, onDelete, onUpdate }: LinkDetailsModa
   // ... (render logic)
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl max-h-[95vh] overflow-y-auto outline-none animate-in fade-in zoom-in duration-200">
+
         {/* ... Header ... */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">{isEditing ? 'Edit Link' : 'Link Details'}</h2>
@@ -132,7 +133,7 @@ function LinkDetailsModal({ link, onClose, onDelete, onUpdate }: LinkDetailsModa
               <p className="mt-2 text-sm text-gray-600">Scan to visit link</p>
 
               {/* QR Actions */}
-              <div className="mt-4 flex gap-2 w-full">
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 w-full">
                 <button
                   onClick={() => {
                     // Download QR Code as PNG
@@ -157,9 +158,9 @@ function LinkDetailsModal({ link, onClose, onDelete, onUpdate }: LinkDetailsModa
 
                     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
                   }}
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold text-sm"
+                  className="px-4 py-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 font-bold text-xs"
                 >
-                  Download PNG
+                  PNG
                 </button>
                 <button
                   onClick={() => {
@@ -188,9 +189,9 @@ function LinkDetailsModal({ link, onClose, onDelete, onUpdate }: LinkDetailsModa
 
                     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
                   }}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-sm"
+                  className="px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold text-xs"
                 >
-                  Download JPEG
+                  JPEG
                 </button>
                 <button
                   onClick={() => {
@@ -207,11 +208,12 @@ function LinkDetailsModal({ link, onClose, onDelete, onUpdate }: LinkDetailsModa
                     downloadLink.click();
                     URL.revokeObjectURL(url);
                   }}
-                  className="flex-1 px-4 py-2 border-2 border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 font-semibold text-sm"
+                  className="px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-bold text-xs"
                 >
-                  Download SVG
+                  SVG
                 </button>
               </div>
+
 
               <button
                 onClick={() => setShowQR(false)}
@@ -282,48 +284,51 @@ function LinkDetailsModal({ link, onClose, onDelete, onUpdate }: LinkDetailsModa
           )}
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-6 border-t border-gray-100">
             {isEditing ? (
               <>
                 <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold disabled:opacity-50"
-                >
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </button>
-                <button
                   onClick={() => setIsEditing(false)}
                   disabled={isSaving}
-                  className="px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold"
+                  className="flex-1 px-4 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-bold transition-all"
                 >
                   Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 font-bold disabled:opacity-50 transition-all shadow-md shadow-purple-100"
+                >
+                  {isSaving ? 'Saving...' : 'Save Changes'}
                 </button>
               </>
             ) : (
               <>
                 <button
-                  onClick={() => setIsEditing(true)}
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold"
-                >
-                  Edit Link
-                </button>
-                <button
-                  onClick={() => setShowQR(true)}
-                  className="px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold"
-                >
-                  Generate QR Code
-                </button>
-                <button
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="px-4 py-2 border-2 border-red-300 text-red-600 rounded-lg hover:bg-red-50 font-semibold disabled:opacity-50"
+                  className="px-4 py-3 border-2 border-red-100 text-red-600 rounded-xl hover:bg-red-50 font-bold disabled:opacity-50 transition-all"
                 >
                   {isDeleting ? 'Deleting...' : 'Delete'}
                 </button>
+                <div className="flex-1 flex gap-2">
+                  <button
+                    onClick={() => setShowQR(true)}
+                    className="flex-1 px-4 py-3 border-2 border-purple-100 text-purple-600 rounded-xl hover:bg-purple-50 font-bold transition-all"
+                  >
+                    QR Code
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 font-bold transition-all shadow-md shadow-purple-100"
+                  >
+                    Edit
+                  </button>
+                </div>
               </>
             )}
           </div>
+
         </div>
       </div>
     </div>
@@ -405,46 +410,56 @@ export function LinksDashboard({ links = [], loading = false, onLinkSelect, onLi
       )}
 
       {/* Filters & Sorting */}
-      <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="flex flex-1 gap-4 w-full md:w-auto">
-          <input
-            type="text"
-            placeholder="Search links by code, destination, or tags..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-600"
-          />
+      <div className="mb-6 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
+        <div className="flex flex-col sm:flex-row flex-1 gap-3 w-full lg:w-auto">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Search links..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full pl-4 pr-10 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 transition-all text-sm"
+            />
+            <div className="absolute right-3 top-3 text-gray-400">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </div>
+          </div>
 
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-600"
-          >
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="mostClicks">Most Clicks</option>
-            <option value="leastClicks">Least Clicks</option>
-          </select>
+          <div className="flex gap-2">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="flex-1 sm:flex-none px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 bg-white text-sm font-medium"
+            >
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="mostClicks">Most Clicks</option>
+              <option value="leastClicks">Least Clicks</option>
+            </select>
+
+            <label
+              htmlFor="csv-upload"
+              className={`flex-1 sm:flex-none px-4 py-2.5 bg-white border-2 border-purple-600 text-purple-600 rounded-xl hover:bg-purple-50 font-bold text-sm cursor-pointer shadow-sm transition-all flex items-center justify-center gap-2 ${isImporting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" /></svg>
+              <span className="hidden sm:inline">{isImporting ? 'Importing...' : 'Import CSV'}</span>
+              <span className="sm:hidden">Import</span>
+              <input
+                id="csv-upload"
+                type="file"
+                accept=".csv"
+                onChange={onCSVImport}
+                disabled={isImporting}
+                className="hidden"
+              />
+            </label>
+          </div>
         </div>
-
-        <label
-          htmlFor="csv-upload"
-          className={`px-4 py-2 bg-white border-2 border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 font-semibold cursor-pointer ${isImporting ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          {isImporting ? 'Importing...' : 'Import CSV'}
-          <input
-            id="csv-upload"
-            type="file"
-            accept=".csv"
-            onChange={onCSVImport}
-            disabled={isImporting}
-            className="hidden"
-          />
-        </label>
       </div>
+
 
       {/* Links Table - Desktop */}
       <div className="hidden md:block bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
@@ -612,57 +627,58 @@ export function LinksDashboard({ links = [], loading = false, onLinkSelect, onLi
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setItemsPerPage(25)}
-              className={`px-4 py-2 rounded-lg font-semibold ${itemsPerPage === 25
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-                }`}
-            >
-              25
-            </button>
-            <button
-              onClick={() => setItemsPerPage(50)}
-              className={`px-4 py-2 rounded-lg font-semibold ${itemsPerPage === 50
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-                }`}
-            >
-              50
-            </button>
-            <button
-              onClick={() => setItemsPerPage(100)}
-              className={`px-4 py-2 rounded-lg font-semibold ${itemsPerPage === 100
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-                }`}
-            >
-              100
-            </button>
+        <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-6 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mr-2">Show:</span>
+            {[25, 50, 100].map((size) => (
+              <button
+                key={size}
+                onClick={() => {
+                  setItemsPerPage(size);
+                  setCurrentPage(1);
+                }}
+                className={`w-10 h-10 rounded-lg font-bold text-sm transition-all ${itemsPerPage === size
+                  ? 'bg-purple-600 text-white shadow-md'
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                  }`}
+              >
+                {size}
+              </button>
+            ))}
           </div>
-          <div className="flex gap-2 items-center">
+
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2.5 bg-gray-50 rounded-lg text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+              title="Previous Page"
             >
-              Previous
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <span className="px-4 py-2">
-              Page {currentPage} of {totalPages}
-            </span>
+
+            <div className="flex items-center gap-2 px-4 py-2 bg-purple-50 rounded-lg">
+              <span className="text-sm font-bold text-purple-600">
+                {currentPage}
+              </span>
+              <span className="text-sm text-purple-300">/</span>
+              <span className="text-sm font-bold text-purple-400">
+                {totalPages}
+              </span>
+            </div>
+
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2.5 bg-gray-50 rounded-lg text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+              title="Next Page"
             >
-              Next
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             </button>
           </div>
         </div>
       )}
+
     </div>
   );
 }

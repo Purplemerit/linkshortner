@@ -44,7 +44,21 @@ export default function DashboardPage() {
         }
       }, 100);
     }
+
+    // Pre-fill campaignId from URL if present
+    const campaignId = searchParams.get('campaignId');
+    if (campaignId) {
+      setCreateFormData(prev => ({ ...prev, campaignId }));
+      // Scroll to create form if campaignId is provided (assuming intent is to create)
+      setTimeout(() => {
+        const formElement = document.getElementById('create-link-section');
+        if (formElement) {
+          formElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 150);
+    }
   }, [searchParams]);
+
 
   // Update URL when tab changes internally
   const handleTabChange = (newTab: TabType) => {
@@ -390,23 +404,39 @@ export default function DashboardPage() {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Destination URL
                   </label>
-                  <div className="relative">
-                    <input
-                      type="url"
-                      placeholder="https://example.com/your-long-url"
-                      value={createFormData.destination}
-                      onChange={(e) => setCreateFormData({ ...createFormData, destination: e.target.value })}
-                      required
-                      className="w-full pl-4 pr-32 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50 transition-all placeholder:text-gray-400"
-                    />
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-1">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                      </div>
+                      <input
+                        type="url"
+                        placeholder="https://example.com/your-long-url"
+                        value={createFormData.destination}
+                        onChange={(e) => setCreateFormData({ ...createFormData, destination: e.target.value })}
+                        required
+                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-50 transition-all placeholder:text-gray-400 text-base"
+                      />
+                    </div>
                     <button
                       type="submit"
                       disabled={isCreating || !createFormData.destination}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-1.5 bg-purple-600 text-white rounded-lg font-semibold text-sm disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-purple-700 transition-colors shadow-sm"
+                      className="px-8 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-all shadow-md hover:shadow-purple-200 active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 whitespace-nowrap"
                     >
-                      {isCreating ? 'Creating...' : 'Shorten'}
+                      {isCreating ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                          <span>Creating...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Shorten</span>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                        </>
+                      )}
                     </button>
                   </div>
+
                 </div>
 
                 {/* Advanced Options Accordion */}
